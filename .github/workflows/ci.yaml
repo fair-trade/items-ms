@@ -1,0 +1,14 @@
+name: CI
+run-name: Validate PR
+on: [push]
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    container:
+      image: maven:3.8.4-openjdk-17
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build and Unit test
+        run: mvn -ntp -e clean test
+
