@@ -4,6 +4,8 @@ import dev.migalons.fairtrade.items.config.ItemsRepository;
 import dev.migalons.fairtrade.items.persintence.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,8 +25,23 @@ public class ItemsService {
         return (List<Item>) itemsRepository.findAll();
     }
 
-    public void addItem(Item item) {
+    public Item getItem(UUID id) {
+        return itemsRepository.findById(id).orElse(null);
+    }
+
+    public void addItem(@Validated @RequestBody Item item) {
         item.setId(UUID.randomUUID());
+        itemsRepository.save(item);
+    }
+
+    public void deleteItem(UUID id) {
+        itemsRepository.deleteById(id);
+    }
+    public void updateItem(Item item) {
+        itemsRepository.save(item);
+    }
+
+    public void patchItem(@RequestBody @Validated Item item) {
         itemsRepository.save(item);
     }
 }
