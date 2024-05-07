@@ -1,5 +1,4 @@
 name: CI
-run-name: Validate PR
 on: [push]
 jobs:
   Build:
@@ -9,6 +8,32 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
       - name: Build and Unit test
         run: mvn -ntp -e clean test
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /root/.docker
+          key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
+          restore-keys: ${{ runner.os }}-docker
+
+      - name: Package
+        run: mvn -ntp -e package
+
+      - name: Publish
+        run: mvn -ntp -e -Djkube.docker.username=${{ secrets.DOCKER_USERNAME }} -Djkube.docker.password=${{ secrets.DOCKER_PASSWORD }} k8s:push
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
+
 

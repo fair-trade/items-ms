@@ -16,6 +16,7 @@
     <properties>
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.1</spring-cloud.version>
+        <docker.registry>ghcr.io/fair-trade</docker.registry>
     </properties>
     <dependencies>
         <dependency>
@@ -125,8 +126,12 @@
                         <image>
                             <alias>${project.artifactId}</alias>
                             <name>${project.artifactId}:${project.version}</name>
+                            <registry>${docker.registry}</registry>
                             <build>
-                                <from>openjdk:17-jdk-alpine</from>
+                                <labels>
+                                    <label>org.opencontainers.image.source=https://github.com/fair-trade/items-ms</label>
+                                </labels>
+                                <from>openjdk:17-jdk-slim</from>
                                 <ports>
                                     <port>8080</port>
                                 </ports>
@@ -148,27 +153,27 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.eclipse.jkube</groupId>
-                <artifactId>helm-maven-plugin</artifactId>
-                <version>1.5.0</version>
-                <configuration>
-                    <chart>
-                        <name>${project.artifactId}</name>
-                        <description>A Helm chart for Kubernetes</description>
-                        <version>${project.version}</version>
-                    </chart>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>helm</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>package</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.eclipse.jkube</groupId>-->
+<!--                <artifactId>helm-maven-plugin</artifactId>-->
+<!--                <version>1.5.0</version>-->
+<!--                <configuration>-->
+<!--                    <chart>-->
+<!--                        <name>${project.artifactId}</name>-->
+<!--                        <description>A Helm chart for Kubernetes</description>-->
+<!--                        <version>${project.version}</version>-->
+<!--                    </chart>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>helm</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>package</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
