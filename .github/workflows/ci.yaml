@@ -16,6 +16,17 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      - name: Git Version
+        id: version
+        if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
+        uses: codacy/git-version@2.7.1
+
+      #get githubflow version
+      - name: Update version
+        #only in master and release branches
+        if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
+        run: mvn -B versions:set -DnewVersion=${{ steps.version.outputs.version }} -DgenerateBackupPoms=false
+
       - name: Build and Unit test
         run: mvn -ntp -e clean test
 
