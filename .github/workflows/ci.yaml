@@ -18,7 +18,7 @@ jobs:
 
       - name: Git Version
         id: version
-        if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/' || startsWith(github.ref, 'refs/heads/feature/add-automated-semver')
+        if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/feature/add-automated-semver')
         uses: codacy/git-version@2.7.1
 
 
